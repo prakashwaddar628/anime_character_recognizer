@@ -36,41 +36,56 @@ const Index = () => {
     setCharacters([]);
 
     try {
-      // For now, mock the response since Lovable Cloud isn't enabled yet
-      // In production, this would call an edge function
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      
-      // Mock data for demonstration
-      const mockCharacters: CharacterData[] = [
-        {
-          character_name: "Naruto Uzumaki",
-          anime_name: "Naruto",
-          description: "Naruto Uzumaki is a spirited ninja of Konohagakure known for his dream of becoming Hokage and his bond with Kurama, the Nine-Tails.",
-          related_characters: [
-            { name: "Sasuke Uchiha", reason: "Rival and teammate in Team 7" },
-            { name: "Jiraiya", reason: "Mentor and inspiration figure" }
-          ],
-          streaming_platforms: [
-            { name: "Crunchyroll", url: "https://www.crunchyroll.com/series/GY9PJ5KWR/naruto" },
-            { name: "Netflix", url: "https://www.netflix.com/title/70205012" }
-          ],
-          appearance: {
-            hair_color: "Blond",
-            eye_color: "Blue",
-            notable_features: ["Whisker-like marks", "Orange jumpsuit"]
-          }
-        }
-      ];
-
-      setCharacters(mockCharacters);
-      toast({
-        title: "Analysis Complete!",
-        description: `Found ${mockCharacters.length} character(s) in the image`,
+      // Convert file to base64
+      const imageBase64 = await new Promise<string>((resolve) => {
+        const fileReader = new FileReader();
+        fileReader.onloadend = () => resolve(fileReader.result as string);
+        fileReader.readAsDataURL(file);
       });
+
+      // Call edge function to analyze characters
+      const response = await fetch(
+        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/analyze-anime-characters`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
+          },
+          body: JSON.stringify({ imageBase64 }),
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error('Failed to analyze image');
+      }
+
+      const data = await response.json();
+      
+      if (data.error) {
+        throw new Error(data.error);
+      }
+
+      const analyzedCharacters = data.results || [];
+      setCharacters(analyzedCharacters);
+      
+      if (analyzedCharacters.length > 0) {
+        toast({
+          title: "Analysis Complete!",
+          description: `Found ${analyzedCharacters.length} character(s) in the image`,
+        });
+      } else {
+        toast({
+          title: "No Characters Found",
+          description: "No anime characters were detected in this image. Try another image!",
+          variant: "destructive",
+        });
+      }
     } catch (error) {
+      console.error('Analysis error:', error);
       toast({
         title: "Analysis Failed",
-        description: "Failed to analyze the image. Please try again.",
+        description: error instanceof Error ? error.message : "Failed to analyze the image. Please try again.",
         variant: "destructive",
       });
     } finally {

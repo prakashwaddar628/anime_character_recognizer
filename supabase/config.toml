@@ -1,0 +1,4 @@
+project_id = "gcqbqitwecykswnaditq"
+
+[functions.analyze-anime-characters]
+verify_jwt = false
