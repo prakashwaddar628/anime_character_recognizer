@@ -3,12 +3,12 @@ import { Upload, Image as ImageIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 
-interface ImageUploadProps {
+interface ImageUploadProp {
   onImageSelect: (file: File) => void;
   isAnalyzing: boolean;
 }
 
-export const ImageUpload = ({ onImageSelect, isAnalyzing }: ImageUploadProps) => {
+export const ImageUpload = ({ onImageSelect, isAnalyzing }: ImageUploadProp) => {
   const [dragActive, setDragActive] = useState(false);
   const { toast } = useToast();
 

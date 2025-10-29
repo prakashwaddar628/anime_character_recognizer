@@ -118,8 +118,9 @@ const Index = () => {
           <div className="inline-flex items-center gap-2 mb-4">
             <Sparkles className="w-8 h-8 text-primary" />
             <h1 className="text-5xl font-bold bg-gradient-to-r from-primary via-secondary to-accent bg-clip-text text-transparent">
-              AnimeVision
+              Anime Character Recognizer
             </h1>
+            <Sparkles className="w-8 h-8 text-secondary" />
           </div>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
             Upload an anime image and discover detailed information about the characters using AI-powered recognition
@@ -188,7 +189,7 @@ const Index = () => {
 
         {/* Footer */}
         <div className="text-center mt-16 text-sm text-muted-foreground">
-          <p>Powered by AI • Made with love for anime fans</p>
+          <p>Made with love for anime fans</p>
         </div>
       </div>
     </div>

@@ -3,34 +3,34 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Sparkles, TrendingUp, Play, ExternalLink } from "lucide-react";
 
-interface RecommendedAnime {
+interface RecommendedAnimes {
   title: string;
   reason: string;
   genre: string;
 }
 
-interface SuggestedCharacter {
+interface SuggestedCharacters {
   name: string;
   anime: string;
   why_similar: string;
 }
 
-interface WatchNext {
+interface WatchNexts {
   title: string;
   description: string;
 }
 
 interface SuggestionsData {
-  recommended_anime: RecommendedAnime[];
-  suggested_characters: SuggestedCharacter[];
-  watch_next: WatchNext[];
+  recommended_anime: RecommendedAnimes[];
+  suggested_characters: SuggestedCharacters[];
+  watch_next: WatchNexts[];
 }
 
-interface SuggestionsPanelProps {
+interface SuggestionsPanelProp {
   suggestions: SuggestionsData;
 }
 
-export const SuggestionsPanel = ({ suggestions }: SuggestionsPanelProps) => {
+export const SuggestionsPanel = ({ suggestions }: SuggestionsPanelProp) => {
   if (!suggestions) return null;
 
   const hasContent = 

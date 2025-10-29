@@ -3,36 +3,36 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 
-interface RelatedCharacter {
+interface RelatedCharacters {
   name: string;
   reason: string;
   similarity?: number;
   image?: string;
 }
 
-interface StreamingPlatform {
+interface StreamingPlatforms {
   name: string;
   url: string;
 }
 
-interface Appearance {
+interface Appearances {
   hair_color: string;
   eye_color: string;
   notable_features: string[];
 }
 
-interface CharacterData {
+interface CharacterDatas {
   character_name: string;
   anime_name: string;
   description: string;
-  related_characters: RelatedCharacter[];
-  streaming_platforms: StreamingPlatform[];
-  appearance: Appearance;
+  related_characters: RelatedCharacters[];
+  streaming_platforms: StreamingPlatforms[];
+  appearance: Appearances;
   image?: string;
 }
 
 interface CharacterCardProps {
-  character: CharacterData;
+  character: CharacterDatas;
 }
 
 export const CharacterCard = ({ character }: CharacterCardProps) => {
