@@ -1,47 +1,87 @@
-# Welcome to your Lovable project
+# ANIME_CHARACTER_RECOGNIZER 🎌
+**Linear Anime Character Similarity Score Tool**
 
-## Project info
+A deep learning-based tool for recognizing and analyzing anime characters using computer vision and machine learning techniques.
 
-**Use your preferred IDE**
+---
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+## 📚 Table of Contents
+- [Overview](#overview)
+- [Getting Started](#getting-started)
+- [Installation](#installation)
+- [Usage](#usage)
+- [Testing](#testing)
+- [Technologies Used](#technologies-used)
+- [License](#license)
 
-Follow these steps:
+---
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+## 🧠 Overview
+Anime Character Recognizer is an innovative tool designed to:
+- Analyze anime characters using AI
+- Recognize characters from images
+- Calculate similarity scores between characters
+- Classify characters based on visual features
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+It leverages **machine learning** and **computer vision** to process anime images and extract meaningful insights.
 
-# Step 3: Install the necessary dependencies.
-npm i
+---
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
-```
+## 🚀 Getting Started
 
-**Edit a file directly in GitHub**
+### 🔧 Prerequisites
+Ensure you have the following installed:
+- Python 3.x
+- Libraries:
+  - OpenCV
+  - NumPy
+  - Scikit-learn
+  - Matplotlib
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+---
 
-**Use GitHub Codespaces**
+## 📦 Installation
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+Clone the repository and install dependencies:
 
-## What technologies are used for this project?
+```bash
+git clone https://github.com/prakashwaddar628/anime_character_recognizer.git
+cd anime_character_recognizer
+pip install -r requirements.txt
 
-This project is built with:
+▶️ Usage
+To run the main script:
+```bash
+python main.py
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+This will launch the character recognition and similarity scoring interface.
+
+🧪 Testing
+Run unit tests to verify functionality:
+```bash
+python -m unittest discover tests
+
+
+
+🛠 Technologies Used
+- Python: Core programming language
+- OpenCV: Image processing
+- NumPy: Numerical computations
+- Scikit-learn: Machine learning models
+- Matplotlib: Data visualization
+
+🙌 Contributing
+Pull requests are welcome! For major changes, please open an issue first to discuss what you would like to change.
+
+📬 Contact
+Created by Prakash Waddar — feel free to reach out for collaboration or feedback.
+
+---
+
+**Highlights from the repo:**
+- *Modular structure* with clear separation of concerns (main script, tests, requirements).
+- *Simple CLI-based interface* for running recognition tasks.
+- *Unit testing support* for reliability.
+- *Focus on visual similarity scoring*, which is useful for anime databases, fan apps, or content tagging.
+
+If you'd like help customizing the README further—like adding badges, screenshots, or usage examples—just let me know!
