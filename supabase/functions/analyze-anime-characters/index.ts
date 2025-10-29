@@ -323,6 +323,66 @@ If any data is missing, set that field to null. Return ONLY valid JSON, no addit
 
     console.log('Analysis complete with images and similarities');
 
+    // Step 6: Generate personalized suggestions
+    console.log('Step 6: Generating personalized suggestions...');
+    
+    const characterList = characters.map((c: any) => `${c.character_name} from ${c.anime_name}`).join(', ');
+    const suggestionsResponse = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${LOVABLE_API_KEY}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        model: 'google/gemini-2.5-flash',
+        messages: [
+          {
+            role: 'system',
+            content: `You are an anime recommendation expert. Based on detected anime characters, provide personalized suggestions in JSON format.
+
+Return a JSON object with these fields:
+- recommended_anime: Array of 3-4 anime recommendations with "title", "reason" (why it's similar), and "genre" fields
+- suggested_characters: Array of 2-3 similar characters to explore with "name", "anime", and "why_similar" fields
+- watch_next: Array of 2 specific episodes/arcs with "title", "description" fields
+
+Return ONLY valid JSON, no additional text.`
+          },
+          {
+            role: 'user',
+            content: `Based on these detected characters: ${characterList}, generate personalized anime recommendations and suggestions.`
+          }
+        ],
+        temperature: 0.7,
+      }),
+    });
+
+    let suggestions = {
+      recommended_anime: [],
+      suggested_characters: [],
+      watch_next: []
+    };
+
+    if (suggestionsResponse.ok) {
+      const suggestionsData = await suggestionsResponse.json();
+      let suggestionsText = suggestionsData.choices[0].message.content.trim();
+      
+      if (suggestionsText.includes('```')) {
+        const match = suggestionsText.match(/```(?:json)?\s*(\{[\s\S]*\})\s*```/);
+        if (match) {
+          suggestionsText = match[1];
+        }
+      }
+      
+      try {
+        suggestions = JSON.parse(suggestionsText);
+        console.log('Suggestions generated successfully');
+      } catch (e) {
+        console.error('Failed to parse suggestions:', e);
+      }
+    }
+
+    results.suggestions = suggestions;
+
     return new Response(
       JSON.stringify(results),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }

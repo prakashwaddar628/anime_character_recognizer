@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { ImageUpload } from "@/components/ImageUpload";
 import { CharacterCard } from "@/components/CharacterCard";
+import { SuggestionsPanel } from "@/components/SuggestionsPanel";
 import { useToast } from "@/hooks/use-toast";
 import { Sparkles, ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -28,6 +29,7 @@ const Index = () => {
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [characters, setCharacters] = useState<CharacterData[]>([]);
+  const [suggestions, setSuggestions] = useState<any>(null);
   const { toast } = useToast();
 
   const handleImageSelect = async (file: File) => {
@@ -73,12 +75,15 @@ const Index = () => {
       }
 
       const analyzedCharacters = data.results || [];
+      const suggestionsData = data.suggestions || null;
+      
       setCharacters(analyzedCharacters);
+      setSuggestions(suggestionsData);
       
       if (analyzedCharacters.length > 0) {
         toast({
           title: "Analysis Complete!",
-          description: `Found ${analyzedCharacters.length} character(s) in the image`,
+          description: `Found ${analyzedCharacters.length} character(s) with personalized suggestions`,
         });
       } else {
         toast({
@@ -102,6 +107,7 @@ const Index = () => {
   const handleReset = () => {
     setSelectedImage(null);
     setCharacters([]);
+    setSuggestions(null);
   };
 
   return (
@@ -160,17 +166,21 @@ const Index = () => {
             )}
 
             {characters.length > 0 && (
-              <div className="space-y-4">
-                <h2 className="text-3xl font-bold text-center mb-8">
-                  <span className="bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
-                    Detected Characters
-                  </span>
-                </h2>
-                <div className="grid gap-6 md:grid-cols-2">
-                  {characters.map((character, idx) => (
-                    <CharacterCard key={idx} character={character} />
-                  ))}
+              <div className="space-y-12">
+                <div className="space-y-4">
+                  <h2 className="text-3xl font-bold text-center mb-8">
+                    <span className="bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
+                      Detected Characters
+                    </span>
+                  </h2>
+                  <div className="grid gap-6 md:grid-cols-2">
+                    {characters.map((character, idx) => (
+                      <CharacterCard key={idx} character={character} />
+                    ))}
+                  </div>
                 </div>
+
+                {suggestions && <SuggestionsPanel suggestions={suggestions} />}
               </div>
             )}
           </div>
