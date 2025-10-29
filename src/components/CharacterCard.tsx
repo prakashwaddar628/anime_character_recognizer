@@ -93,7 +93,7 @@ export const CharacterCard = ({ character }: CharacterCardProps) => {
           <div>
             <h4 className="text-sm font-semibold text-primary mb-3">
               Related Characters
-              <span className="text-xs text-muted-foreground ml-2">(by similarity)</span>
+              <span className="text-xs text-muted-foreground ml-2">(from the anime)</span>
             </h4>
             <div className="space-y-3">
               {character.related_characters.map((related, idx) => (
