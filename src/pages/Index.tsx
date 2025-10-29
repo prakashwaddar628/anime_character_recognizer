@@ -9,13 +9,19 @@ interface CharacterData {
   character_name: string;
   anime_name: string;
   description: string;
-  related_characters: Array<{ name: string; reason: string }>;
+  related_characters: Array<{ 
+    name: string; 
+    reason: string; 
+    similarity?: number;
+    image?: string;
+  }>;
   streaming_platforms: Array<{ name: string; url: string }>;
   appearance: {
     hair_color: string;
     eye_color: string;
     notable_features: string[];
   };
+  image?: string;
 }
 
 const Index = () => {

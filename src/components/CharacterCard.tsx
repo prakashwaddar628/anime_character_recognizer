@@ -6,6 +6,8 @@ import { Button } from "@/components/ui/button";
 interface RelatedCharacter {
   name: string;
   reason: string;
+  similarity?: number;
+  image?: string;
 }
 
 interface StreamingPlatform {
@@ -26,6 +28,7 @@ interface CharacterData {
   related_characters: RelatedCharacter[];
   streaming_platforms: StreamingPlatform[];
   appearance: Appearance;
+  image?: string;
 }
 
 interface CharacterCardProps {
@@ -36,6 +39,17 @@ export const CharacterCard = ({ character }: CharacterCardProps) => {
   return (
     <Card className="gradient-card shadow-card border-border/50 hover:shadow-glow transition-smooth overflow-hidden group">
       <div className="absolute inset-0 gradient-anime opacity-0 group-hover:opacity-10 transition-smooth" />
+      
+      {character.image && (
+        <div className="relative h-64 overflow-hidden">
+          <img
+            src={character.image}
+            alt={character.character_name}
+            className="w-full h-full object-cover"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-card via-card/50 to-transparent" />
+        </div>
+      )}
       
       <CardHeader className="relative">
         <div className="flex items-start justify-between gap-4">
@@ -77,15 +91,42 @@ export const CharacterCard = ({ character }: CharacterCardProps) => {
 
         {character.related_characters && character.related_characters.length > 0 && (
           <div>
-            <h4 className="text-sm font-semibold text-primary mb-3">Related Characters</h4>
-            <div className="space-y-2">
+            <h4 className="text-sm font-semibold text-primary mb-3">
+              Related Characters
+              <span className="text-xs text-muted-foreground ml-2">(by similarity)</span>
+            </h4>
+            <div className="space-y-3">
               {character.related_characters.map((related, idx) => (
                 <div
                   key={idx}
-                  className="bg-muted/30 rounded-lg p-3 border border-border/50"
+                  className="bg-muted/30 rounded-lg p-3 border border-border/50 hover:border-primary/50 transition-smooth"
                 >
-                  <p className="font-semibold text-sm text-foreground">{related.name}</p>
-                  <p className="text-xs text-muted-foreground mt-1">{related.reason}</p>
+                  <div className="flex gap-3">
+                    {related.image && (
+                      <div className="w-16 h-16 rounded-lg overflow-hidden flex-shrink-0 shadow-card">
+                        <img
+                          src={related.image}
+                          alt={related.name}
+                          className="w-full h-full object-cover"
+                        />
+                      </div>
+                    )}
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2 mb-1">
+                        <p className="font-semibold text-sm text-foreground truncate">
+                          {related.name}
+                        </p>
+                        {related.similarity !== undefined && (
+                          <Badge variant="secondary" className="text-xs bg-primary/20 text-primary">
+                            {(related.similarity * 100).toFixed(0)}%
+                          </Badge>
+                        )}
+                      </div>
+                      <p className="text-xs text-muted-foreground line-clamp-2">
+                        {related.reason}
+                      </p>
+                    </div>
+                  </div>
                 </div>
               ))}
             </div>

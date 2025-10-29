@@ -6,6 +6,70 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
+// Calculate cosine similarity between two vectors
+function cosineSimilarity(vecA: number[], vecB: number[]): number {
+  const dotProduct = vecA.reduce((sum, a, i) => sum + a * vecB[i], 0);
+  const magnitudeA = Math.sqrt(vecA.reduce((sum, a) => sum + a * a, 0));
+  const magnitudeB = Math.sqrt(vecB.reduce((sum, b) => sum + b * b, 0));
+  return dotProduct / (magnitudeA * magnitudeB);
+}
+
+// Generate embeddings for a character description
+async function generateEmbedding(text: string, apiKey: string): Promise<number[]> {
+  const response = await fetch('https://ai.gateway.lovable.dev/v1/embeddings', {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${apiKey}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      model: 'text-embedding-3-small',
+      input: text,
+    }),
+  });
+
+  if (!response.ok) {
+    throw new Error('Failed to generate embedding');
+  }
+
+  const data = await response.json();
+  return data.data[0].embedding;
+}
+
+// Generate character image using AI
+async function generateCharacterImage(characterName: string, description: string, apiKey: string): Promise<string> {
+  console.log(`Generating image for ${characterName}...`);
+  
+  const prompt = `A high-quality anime character portrait of ${characterName}. ${description}. Professional anime art style, detailed facial features, vibrant colors, studio quality.`;
+  
+  const response = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${apiKey}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      model: 'google/gemini-2.5-flash-image-preview',
+      messages: [
+        {
+          role: 'user',
+          content: prompt
+        }
+      ],
+      modalities: ['image', 'text']
+    }),
+  });
+
+  if (!response.ok) {
+    console.error('Image generation failed:', await response.text());
+    return '';
+  }
+
+  const data = await response.json();
+  const imageUrl = data.choices?.[0]?.message?.images?.[0]?.image_url?.url;
+  return imageUrl || '';
+}
+
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
@@ -114,7 +178,7 @@ For each character, provide:
 - character_name: The character's full name
 - anime_name: The anime/series they're from
 - description: 2-4 sentences about the character (accurate and neutral)
-- related_characters: Array of 1-2 related characters with "name" and "reason" fields
+- related_characters: Array of 3-4 related characters with "name" and "reason" fields
 - streaming_platforms: Array of 2 platforms (if available) with "name" and "url" fields
 - appearance: Object with "hair_color", "eye_color", and "notable_features" (array of 2-3 items)
 
@@ -158,6 +222,106 @@ If any data is missing, set that field to null. Return ONLY valid JSON, no addit
     }
 
     console.log('Successfully processed', results.results?.length || 0, 'characters');
+
+    // Step 3: Generate embeddings and find similar characters using cosine similarity
+    console.log('Step 3: Computing character similarities...');
+    
+    const characters = results.results || [];
+    const characterEmbeddings: { [key: string]: number[] } = {};
+    
+    // Generate embeddings for all detected characters
+    for (const char of characters) {
+      const embeddingText = `${char.character_name} from ${char.anime_name}. ${char.description}`;
+      try {
+        characterEmbeddings[char.character_name] = await generateEmbedding(embeddingText, LOVABLE_API_KEY);
+      } catch (e) {
+        console.error(`Failed to generate embedding for ${char.character_name}:`, e);
+      }
+    }
+
+    // Generate embeddings for related characters and compute similarities
+    const allRelatedCharacters = new Set<string>();
+    for (const char of characters) {
+      if (char.related_characters) {
+        char.related_characters.forEach((rc: any) => allRelatedCharacters.add(rc.name));
+      }
+    }
+
+    const relatedEmbeddings: { [key: string]: number[] } = {};
+    for (const relatedName of allRelatedCharacters) {
+      try {
+        relatedEmbeddings[relatedName] = await generateEmbedding(relatedName, LOVABLE_API_KEY);
+      } catch (e) {
+        console.error(`Failed to generate embedding for related character ${relatedName}:`, e);
+      }
+    }
+
+    // Calculate similarities and enhance related characters with similarity scores
+    for (const char of characters) {
+      if (char.related_characters && characterEmbeddings[char.character_name]) {
+        const mainEmbedding = characterEmbeddings[char.character_name];
+        
+        char.related_characters = char.related_characters.map((rc: any) => {
+          let similarity = 0;
+          if (relatedEmbeddings[rc.name]) {
+            similarity = cosineSimilarity(mainEmbedding, relatedEmbeddings[rc.name]);
+          }
+          return {
+            ...rc,
+            similarity: Math.round(similarity * 100) / 100,
+            image: '' // Will be populated next
+          };
+        });
+
+        // Sort by similarity (highest first)
+        char.related_characters.sort((a: any, b: any) => b.similarity - a.similarity);
+      }
+    }
+
+    // Step 4: Generate images for main characters
+    console.log('Step 4: Generating character images...');
+    
+    for (const char of characters) {
+      try {
+        const imagePrompt = `${char.character_name} from ${char.anime_name}. ${char.description}`;
+        char.image = await generateCharacterImage(char.character_name, imagePrompt, LOVABLE_API_KEY);
+      } catch (e) {
+        console.error(`Failed to generate image for ${char.character_name}:`, e);
+        char.image = '';
+      }
+    }
+
+    // Step 5: Generate images for top related characters
+    console.log('Step 5: Generating related character images...');
+    
+    const generatedRelatedImages: { [key: string]: string } = {};
+    
+    for (const char of characters) {
+      if (char.related_characters) {
+        // Generate images for top 3 most similar characters
+        const topRelated = char.related_characters.slice(0, 3);
+        
+        for (const rc of topRelated) {
+          // Skip if already generated
+          if (generatedRelatedImages[rc.name]) {
+            rc.image = generatedRelatedImages[rc.name];
+            continue;
+          }
+
+          try {
+            const relatedImagePrompt = `${rc.name}, an anime character. ${rc.reason}. Professional anime art style, detailed portrait.`;
+            const image = await generateCharacterImage(rc.name, relatedImagePrompt, LOVABLE_API_KEY);
+            rc.image = image;
+            generatedRelatedImages[rc.name] = image;
+          } catch (e) {
+            console.error(`Failed to generate image for related character ${rc.name}:`, e);
+            rc.image = '';
+          }
+        }
+      }
+    }
+
+    console.log('Analysis complete with images and similarities');
 
     return new Response(
       JSON.stringify(results),
