@@ -45,20 +45,18 @@ Ensure you have the following installed:
 Clone the repository and install dependencies:
 
 ```bash
-git clone https://github.com/prakashwaddar628/anime_character_recognizer.git
-cd anime_character_recognizer
-pip install -r requirements.txt
+    git clone https://github.com/prakashwaddar628/anime_character_recognizer.git
+    cd anime_character_recognizer
+    pip install -r requirements.txt
 
 ▶️ Usage
 To run the main script:
-```bash
 python main.py
 
 This will launch the character recognition and similarity scoring interface.
 
 🧪 Testing
 Run unit tests to verify functionality:
-```bash
 python -m unittest discover tests
 
 
