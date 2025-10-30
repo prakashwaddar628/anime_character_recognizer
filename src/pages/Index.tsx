@@ -5,6 +5,7 @@ import { SuggestionsPanel } from "@/components/SuggestionsPanel";
 import { useToast } from "@/hooks/use-toast";
 import { Sparkles, ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { analyzeAnimeCharacters } from "@/lib/local-inference";
 
 interface CharacterData {
   character_name: string;
@@ -33,52 +34,43 @@ const Index = () => {
   const { toast } = useToast();
 
   const handleImageSelect = async (file: File) => {
-    // Create preview
-    const reader = new FileReader();
-    reader.onloadend = () => {
-      setSelectedImage(reader.result as string);
-    };
-    reader.readAsDataURL(file);
-
+    // Create image URL for preview and analysis
+    const imageUrl = URL.createObjectURL(file);
+    setSelectedImage(imageUrl);
     setIsAnalyzing(true);
     setCharacters([]);
+    setSuggestions(null);
 
     try {
-      // Convert file to base64
-      const imageBase64 = await new Promise<string>((resolve) => {
-        const fileReader = new FileReader();
-        fileReader.onloadend = () => resolve(fileReader.result as string);
-        fileReader.readAsDataURL(file);
+      // Use local browser-based ML models
+      const result = await analyzeAnimeCharacters(imageUrl, (step) => {
+        console.log('Progress:', step);
       });
 
-      // Call edge function to analyze characters
-      const response = await fetch(
-        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/analyze-anime-characters`,
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
-          },
-          body: JSON.stringify({ imageBase64 }),
-        }
-      );
-
-      if (!response.ok) {
-        throw new Error('Failed to analyze image');
-      }
-
-      const data = await response.json();
+      console.log('Analysis result:', result);
       
-      if (data.error) {
-        throw new Error(data.error);
-      }
-
-      const analyzedCharacters = data.results || [];
-      const suggestionsData = data.suggestions || null;
+      // Map the result to match the expected format
+      const analyzedCharacters = result.characters.map((char) => ({
+        character_name: char.name,
+        anime_name: char.anime,
+        description: char.description,
+        related_characters: char.relatedCharacters.map((rc) => ({
+          name: rc.name,
+          reason: `${(rc.similarity * 100).toFixed(1)}% similar`,
+          similarity: rc.similarity,
+          image: rc.image,
+        })),
+        streaming_platforms: char.streamingPlatforms,
+        appearance: {
+          hair_color: 'Unknown',
+          eye_color: 'Unknown',
+          notable_features: [],
+        },
+        image: char.image,
+      }));
       
       setCharacters(analyzedCharacters);
-      setSuggestions(suggestionsData);
+      setSuggestions(result.suggestions);
       
       if (analyzedCharacters.length > 0) {
         toast({
@@ -88,7 +80,7 @@ const Index = () => {
       } else {
         toast({
           title: "No Characters Found",
-          description: "No anime characters were detected in this image. Try another image!",
+          description: "Please add character data to the knowledge base in src/lib/ml-models.ts",
           variant: "destructive",
         });
       }
@@ -96,7 +88,7 @@ const Index = () => {
       console.error('Analysis error:', error);
       toast({
         title: "Analysis Failed",
-        description: error instanceof Error ? error.message : "Failed to analyze the image. Please try again.",
+        description: error instanceof Error ? error.message : "Failed to analyze image. Make sure models are loaded.",
         variant: "destructive",
       });
     } finally {
