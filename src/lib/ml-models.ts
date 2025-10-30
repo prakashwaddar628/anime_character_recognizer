@@ -1,8 +1,9 @@
-import { pipeline, env, AutoModel, AutoTokenizer } from '@huggingface/transformers';
+import { pipeline, env } from '@huggingface/transformers';
 
-// Configure transformers.js
-env.allowLocalModels = true; // Allow loading local models
-env.useBrowserCache = true;
+// Configure transformers.js to download models from HuggingFace
+env.allowLocalModels = false; // Download from HuggingFace Hub
+env.useBrowserCache = true; // Cache models in browser after download
+env.allowRemoteModels = true; // Allow remote model loading
 
 // Model paths - you can replace these with your custom trained models
 const MODEL_PATHS = {
