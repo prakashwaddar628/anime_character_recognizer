@@ -120,16 +120,94 @@ export interface AnimeCharacterKnowledge {
 
 // Sample knowledge base - replace with your own data
 export const characterKnowledgeBase: Record<string, AnimeCharacterKnowledge> = {
-  // Add your character data here
-  // Example:
-  // "Naruto Uzumaki": {
-  //   name: "Naruto Uzumaki",
-  //   anime: "Naruto",
-  //   description: "...",
-  //   relatedCharacters: ["Sasuke", "Sakura"],
-  //   appearances: ["Naruto", "Naruto Shippuden"],
-  //   streamingPlatforms: [...]
-  // }
+  "Naruto Uzumaki": {
+    name: "Naruto Uzumaki",
+    anime: "Naruto",
+    description: "A young ninja with dreams of becoming Hokage. Known for his orange jumpsuit, whisker marks, and never-give-up attitude. Hosts the Nine-Tailed Fox spirit.",
+    relatedCharacters: ["Sasuke Uchiha", "Sakura Haruno", "Kakashi Hatake", "Jiraiya"],
+    appearances: ["Naruto", "Naruto Shippuden", "Boruto: Naruto Next Generations"],
+    streamingPlatforms: [
+      { name: "Crunchyroll", url: "https://www.crunchyroll.com/series/GY9PJ5KWR/naruto" },
+      { name: "Netflix", url: "https://www.netflix.com/title/70205012" }
+    ]
+  },
+  "Sasuke Uchiha": {
+    name: "Sasuke Uchiha",
+    anime: "Naruto",
+    description: "Last surviving member of the Uchiha clan, seeking revenge for his family. A prodigy ninja with the Sharingan eye technique.",
+    relatedCharacters: ["Naruto Uzumaki", "Itachi Uchiha", "Sakura Haruno", "Kakashi Hatake"],
+    appearances: ["Naruto", "Naruto Shippuden", "Boruto: Naruto Next Generations"],
+    streamingPlatforms: [
+      { name: "Crunchyroll", url: "https://www.crunchyroll.com/series/GY9PJ5KWR/naruto" },
+      { name: "Netflix", url: "https://www.netflix.com/title/70205012" }
+    ]
+  },
+  "Monkey D. Luffy": {
+    name: "Monkey D. Luffy",
+    anime: "One Piece",
+    description: "Captain of the Straw Hat Pirates with the power to stretch like rubber. Dreams of becoming the Pirate King and finding the legendary One Piece treasure.",
+    relatedCharacters: ["Roronoa Zoro", "Nami", "Sanji", "Tony Tony Chopper"],
+    appearances: ["One Piece"],
+    streamingPlatforms: [
+      { name: "Crunchyroll", url: "https://www.crunchyroll.com/series/GRMG8ZQZR/one-piece" },
+      { name: "Netflix", url: "https://www.netflix.com/title/80217863" }
+    ]
+  },
+  "Roronoa Zoro": {
+    name: "Roronoa Zoro",
+    anime: "One Piece",
+    description: "Swordsman of the Straw Hat Pirates who uses three-sword style. Dreams of becoming the world's greatest swordsman.",
+    relatedCharacters: ["Monkey D. Luffy", "Sanji", "Dracule Mihawk", "Nami"],
+    appearances: ["One Piece"],
+    streamingPlatforms: [
+      { name: "Crunchyroll", url: "https://www.crunchyroll.com/series/GRMG8ZQZR/one-piece" },
+      { name: "Netflix", url: "https://www.netflix.com/title/80217863" }
+    ]
+  },
+  "Son Goku": {
+    name: "Son Goku",
+    anime: "Dragon Ball",
+    description: "A Saiyan raised on Earth who becomes its greatest defender. Known for his spiky black hair, orange gi, and incredible fighting abilities including Super Saiyan transformations.",
+    relatedCharacters: ["Vegeta", "Gohan", "Piccolo", "Krillin"],
+    appearances: ["Dragon Ball", "Dragon Ball Z", "Dragon Ball Super"],
+    streamingPlatforms: [
+      { name: "Crunchyroll", url: "https://www.crunchyroll.com/series/GR19V7816/dragon-ball-super" },
+      { name: "Funimation", url: "https://www.funimation.com/shows/dragon-ball-z/" }
+    ]
+  },
+  "Vegeta": {
+    name: "Vegeta",
+    anime: "Dragon Ball",
+    description: "Prince of the Saiyans and rival-turned-ally of Goku. Proud warrior with incredible power, constantly striving to surpass Goku.",
+    relatedCharacters: ["Son Goku", "Trunks", "Bulma", "Gohan"],
+    appearances: ["Dragon Ball Z", "Dragon Ball Super"],
+    streamingPlatforms: [
+      { name: "Crunchyroll", url: "https://www.crunchyroll.com/series/GR19V7816/dragon-ball-super" },
+      { name: "Funimation", url: "https://www.funimation.com/shows/dragon-ball-z/" }
+    ]
+  },
+  "Eren Yeager": {
+    name: "Eren Yeager",
+    anime: "Attack on Titan",
+    description: "A young man who seeks freedom and revenge against the Titans that destroyed his home. Possesses the power of the Attack Titan.",
+    relatedCharacters: ["Mikasa Ackerman", "Armin Arlert", "Levi Ackerman", "Reiner Braun"],
+    appearances: ["Attack on Titan"],
+    streamingPlatforms: [
+      { name: "Crunchyroll", url: "https://www.crunchyroll.com/series/GR751KNZY/attack-on-titan" },
+      { name: "Hulu", url: "https://www.hulu.com/series/attack-on-titan-9c91ffa3-dc20-48bf-8bc5-692e37c76d88" }
+    ]
+  },
+  "Levi Ackerman": {
+    name: "Levi Ackerman",
+    anime: "Attack on Titan",
+    description: "Humanity's strongest soldier, captain of the Survey Corps Special Operations Squad. Known for his incredible combat skills and cleanliness obsession.",
+    relatedCharacters: ["Eren Yeager", "Mikasa Ackerman", "Erwin Smith", "Hange Zoë"],
+    appearances: ["Attack on Titan"],
+    streamingPlatforms: [
+      { name: "Crunchyroll", url: "https://www.crunchyroll.com/series/GR751KNZY/attack-on-titan" },
+      { name: "Hulu", url: "https://www.hulu.com/series/attack-on-titan-9c91ffa3-dc20-48bf-8bc5-692e37c76d88" }
+    ]
+  }
 };
 
 /**
