@@ -28,16 +28,15 @@ export interface SuggestionsResult {
   recommended_anime: Array<{
     title: string;
     reason: string;
-    genres: string[];
+    genre: string;
   }>;
   suggested_characters: Array<{
     name: string;
     anime: string;
-    reason: string;
+    why_similar: string;
   }>;
   watch_next: Array<{
     title: string;
-    episode: string;
     description: string;
   }>;
 }
@@ -129,18 +128,17 @@ function generateSuggestions(characters: CharacterAnalysisResult[]): Suggestions
     recommended_anime: Array.from(animes).map((anime) => ({
       title: anime,
       reason: 'Based on detected characters',
-      genres: ['Action', 'Adventure'], // Add your own genre detection
+      genre: 'Action', // Add your own genre detection
     })),
     suggested_characters: characters.flatMap((c) =>
       c.relatedCharacters.slice(0, 2).map((rc) => ({
         name: rc.name,
         anime: c.anime,
-        reason: `Similar to ${c.name}`,
+        why_similar: `Similar to ${c.name}`,
       }))
     ),
     watch_next: Array.from(animes).map((anime) => ({
       title: anime,
-      episode: 'Season 1, Episode 1',
       description: 'Continue your anime journey',
     })),
   };
