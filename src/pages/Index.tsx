@@ -2,6 +2,7 @@ import { useState } from "react";
 import { ImageUpload } from "@/components/ImageUpload";
 import { CharacterCard } from "@/components/CharacterCard";
 import { SuggestionsPanel } from "@/components/SuggestionsPanel";
+import { LoadingProgress } from "@/components/LoadingProgress";
 import { useToast } from "@/hooks/use-toast";
 import { Sparkles, ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -29,6 +30,7 @@ interface CharacterData {
 const Index = () => {
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
+  const [currentStep, setCurrentStep] = useState("");
   const [characters, setCharacters] = useState<CharacterData[]>([]);
   const [suggestions, setSuggestions] = useState<any>(null);
   const { toast } = useToast();
@@ -44,7 +46,7 @@ const Index = () => {
     try {
       // Use local browser-based ML models
       const result = await analyzeAnimeCharacters(imageUrl, (step) => {
-        console.log('Progress:', step);
+        setCurrentStep(step);
       });
 
       console.log('Analysis result:', result);
@@ -150,11 +152,8 @@ const Index = () => {
 
             {/* Results */}
             {isAnalyzing && (
-              <div className="text-center py-12">
-                <div className="inline-flex items-center gap-3 text-lg">
-                  <div className="w-6 h-6 border-4 border-primary border-t-transparent rounded-full animate-spin" />
-                  <span className="text-muted-foreground">Analyzing characters...</span>
-                </div>
+              <div className="py-8">
+                <LoadingProgress currentStep={currentStep} />
               </div>
             )}
 
