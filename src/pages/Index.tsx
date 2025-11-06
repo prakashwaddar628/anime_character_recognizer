@@ -4,7 +4,7 @@ import { CharacterCard } from "@/components/CharacterCard";
 import { SuggestionsPanel } from "@/components/SuggestionsPanel";
 import { LoadingProgress } from "@/components/LoadingProgress";
 import { useToast } from "@/hooks/use-toast";
-import { Sparkles, ArrowLeft } from "lucide-react";
+import { Sparkles, ArrowLeft, GitCompare } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { analyzeAnimeCharacters } from "@/lib/local-inference";
 
@@ -116,9 +116,17 @@ const Index = () => {
             </h1>
             <Sparkles className="w-8 h-8 text-secondary" />
           </div>
-          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+          <p className="text-lg text-muted-foreground max-w-2xl mx-auto mb-6">
             Upload an anime image and discover detailed information about the characters using AI-powered recognition
           </p>
+          <Button
+            variant="outline"
+            onClick={() => window.location.href = '/compare'}
+            className="gap-2 border-primary/30 hover:bg-primary/10"
+          >
+            <GitCompare className="w-4 h-4" />
+            Compare Multiple Images
+          </Button>
         </div>
 
         {/* Main Content */}
